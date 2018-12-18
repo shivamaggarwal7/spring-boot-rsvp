@@ -23,6 +23,9 @@ import com.rsvp.repository.CityRepository;
 import com.rsvp.repository.DateRepository;
 import com.rsvp.repository.RegistrantRepository;
 import com.rsvp.repository.TimeRepository;
+import com.rsvp.service.CityService;
+import com.rsvp.service.DateService;
+import com.rsvp.service.TimeService;
 
 @RestController
 public class RsvpController {
@@ -34,13 +37,13 @@ public class RsvpController {
 	static Logger log = LogManager.getLogger();
 
 	@Autowired
-	private CityRepository cityRepo;
+	private CityService cityservice;
 
 	@Autowired
-	private DateRepository dateRepo;
+	private DateService dateService;
 
 	@Autowired
-	private TimeRepository timeRepo;
+	private TimeService timeService;
 
 	@Autowired
 	private RegistrantRepository regRepo;
@@ -52,17 +55,17 @@ public class RsvpController {
 
 	@RequestMapping("/cities")
 	public List<RsvpCity> getCities() {
-		return cityRepo.findByActive(ACTIVE);
+		return cityservice.getCities();
 	}
 
 	@RequestMapping("/dates")
 	public List<RsvpDate> getDates(@RequestParam Long cityId) {
-		return dateRepo.findByCityIdAndActive(cityId, ACTIVE);
+		return dateService.getDates(cityId);
 	}
 
 	@RequestMapping("/time")
 	public List<RsvpTime> getTime(@RequestParam Long dateId) {
-		return timeRepo.findByDateIdAndActive(dateId, ACTIVE);
+		return timeService.getTime(dateId);
 	}
 
 	@PostMapping("/validateEmail")
@@ -83,7 +86,7 @@ public class RsvpController {
 	public ModelAndView resvRSVP(@RequestParam Long userId, Long cityId, Long dateId, Long timeId, ModelAndView model) {
 
 		try {
-			if (!timeRepo.getOne(timeId).isSlotBooked()) {
+			if (!timeService.getTimeById(timeId).isSlotBooked()) {
 				/* Update User to Inactive */
 				Registrant user = regRepo.getOne(userId);
 				user.setActive(INACTIVE);
@@ -91,27 +94,27 @@ public class RsvpController {
 				regRepo.save(user);
 
 				/* Update Selected time to Inactive */
-				RsvpTime time = timeRepo.getOne(timeId);
+				RsvpTime time = timeService.getTimeById(timeId);
 				time.setActive(INACTIVE);
 				time.setSlotBooked(SLOT_BOOKED);
-				timeRepo.save(time);
+				timeService.saveTime(time);
 
 				/*
 				 * Check for all times for given date,if all inactive,set date as inactive too
 				 */
 				if (getTime(dateId).isEmpty()) {
-					RsvpDate date = dateRepo.getOne(dateId);
+					RsvpDate date = dateService.getDateById(dateId);
 					date.setActive(INACTIVE);
-					dateRepo.save(date);
+					dateService.saveDate(date);
 				}
 
 				/*
 				 * Check for all times for given date,if all inactive,set date as inactive too
 				 */
 				if (getDates(cityId).isEmpty()) {
-					RsvpCity city = cityRepo.getOne(cityId);
+					RsvpCity city = cityservice.getCityById(cityId);
 					city.setActive(INACTIVE);
-					cityRepo.save(city);
+					cityservice.saveCity(city);
 				}
 
 				model.getModelMap().addAttribute("success", "RSVP Done Successfully!");
