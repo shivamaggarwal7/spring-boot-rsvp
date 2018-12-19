@@ -2,14 +2,29 @@ package com.rsvp.service;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.rsvp.entity.Registrant;
-import com.rsvp.entity.RsvpTime;
+import com.rsvp.repository.RegistrantRepository;
 
-@Repository
-public interface RegistrantService extends JpaRepository<Registrant, Long> {
+@Service
+public class RegistrantService {
 	
-	List<Registrant> findByEmailIdAndActive(String emailId,String active);
+	@Autowired
+	private RegistrantRepository regRepo;
+	
+	private static final String ACTIVE = "Y";
+	
+	public List<Registrant> getRegistrantByEmail(String emailId) {
+		return regRepo.findByEmailIdAndActive(emailId, ACTIVE);
+	}
+	
+	public Registrant getRegistrantById(Long userId) {
+		return regRepo.getOne(userId);
+	}
+	
+	public Registrant saveRegistrant(Registrant user) {
+		return regRepo.save(user);
+	}
 }

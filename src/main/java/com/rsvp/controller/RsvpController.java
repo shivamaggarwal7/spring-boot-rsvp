@@ -19,15 +19,14 @@ import com.rsvp.entity.Registrant;
 import com.rsvp.entity.RsvpCity;
 import com.rsvp.entity.RsvpDate;
 import com.rsvp.entity.RsvpTime;
-import com.rsvp.repository.RegistrantRepository;
 import com.rsvp.service.CityService;
 import com.rsvp.service.DateService;
+import com.rsvp.service.RegistrantService;
 import com.rsvp.service.TimeService;
 
 @RestController
 public class RsvpController {
 
-	private static final String ACTIVE = "Y";
 	private static final String INACTIVE = "N";
 	private static final boolean SLOT_BOOKED = true;
 
@@ -43,7 +42,7 @@ public class RsvpController {
 	private TimeService timeService;
 
 	@Autowired
-	private RegistrantRepository regRepo;
+	private RegistrantService regService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView homeScreen(ModelMap model) {
@@ -67,8 +66,8 @@ public class RsvpController {
 
 	@PostMapping("/validateEmail")
 	public ModelAndView validateEmail(@RequestParam String email, ModelAndView model) {
-		if (!regRepo.findByEmailIdAndActive(email, ACTIVE).isEmpty()) {
-			model.getModelMap().addAttribute("user", regRepo.findByEmailIdAndActive(email, ACTIVE).get(0));
+		if (!regService.getRegistrantByEmail(email).isEmpty()) {
+			model.getModelMap().addAttribute("user", regService.getRegistrantByEmail(email).get(0));
 			model.getModelMap().addAttribute("cities", getCities());
 			model.setViewName("rsvp");
 		} else {
@@ -85,10 +84,10 @@ public class RsvpController {
 		try {
 			if (!timeService.getTimeById(timeId).isSlotBooked()) {
 				/* Update User to Inactive */
-				Registrant user = regRepo.getOne(userId);
+				Registrant user = regService.getRegistrantById(userId);
 				user.setActive(INACTIVE);
 				user.setRsvpFlag(SLOT_BOOKED);
-				regRepo.save(user);
+				regService.saveRegistrant(user);
 
 				/* Update Selected time to Inactive */
 				RsvpTime time = timeService.getTimeById(timeId);
