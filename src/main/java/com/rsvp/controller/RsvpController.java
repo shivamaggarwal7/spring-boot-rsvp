@@ -2,8 +2,6 @@ package com.rsvp.controller;
 
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.rsvp.entity.Registrant;
 import com.rsvp.entity.RsvpCity;
 import com.rsvp.entity.RsvpDate;
 import com.rsvp.entity.RsvpTime;
 import com.rsvp.service.CityService;
 import com.rsvp.service.DateService;
 import com.rsvp.service.RegistrantService;
+import com.rsvp.service.ReservationService;
 import com.rsvp.service.TimeService;
 
 @RestController
 public class RsvpController {
-
-	private static final String INACTIVE = "N";
-	private static final boolean SLOT_BOOKED = true;
 
 	static Logger log = LogManager.getLogger();
 
@@ -43,6 +38,9 @@ public class RsvpController {
 
 	@Autowired
 	private RegistrantService regService;
+	
+	@Autowired
+	private ReservationService resvService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView homeScreen(ModelMap model) {
@@ -81,45 +79,12 @@ public class RsvpController {
 	@PostMapping("/reserveRSVP")
 	public ModelAndView resvRSVP(@RequestParam Long userId, Long cityId, Long dateId, Long timeId, ModelAndView model) {
 
-		try {
-			if (!timeService.getTimeById(timeId).isSlotBooked()) {
-				/* Update User to Inactive */
-				Registrant user = regService.getRegistrantById(userId);
-				user.setActive(INACTIVE);
-				user.setRsvpFlag(SLOT_BOOKED);
-				regService.saveRegistrant(user);
-
-				/* Update Selected time to Inactive */
-				RsvpTime time = timeService.getTimeById(timeId);
-				time.setActive(INACTIVE);
-				time.setSlotBooked(SLOT_BOOKED);
-				timeService.saveTime(time);
-
-				/*
-				 * Check for all times for given date,if all inactive,set date as inactive too
-				 */
-				if (getTime(dateId).isEmpty()) {
-					RsvpDate date = dateService.getDateById(dateId);
-					date.setActive(INACTIVE);
-					dateService.saveDate(date);
-				}
-
-				/*
-				 * Check for all times for given date,if all inactive,set date as inactive too
-				 */
-				if (getDates(cityId).isEmpty()) {
-					RsvpCity city = cityservice.getCityById(cityId);
-					city.setActive(INACTIVE);
-					cityservice.saveCity(city);
-				}
-
+		boolean resvMade = resvService.makeReservation(userId, cityId, dateId, timeId, model);	
+		if(resvMade)
 				model.getModelMap().addAttribute("success", "RSVP Done Successfully!");
-			} else {
+			else 
 				model.getModelMap().addAttribute("failure", "The given slot is already booked.Please try again!");
-			}
-		} catch (EntityNotFoundException e) {
-			model.getModelMap().addAttribute("failure", "User/Date/Time not found!");
-		}
+		
 		model.setViewName("view");
 		return model;
 	}
