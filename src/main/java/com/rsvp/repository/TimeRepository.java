@@ -10,5 +10,5 @@ import com.rsvp.entity.RsvpTime;
 @Repository
 public interface TimeRepository extends JpaRepository<RsvpTime, Long> {
 	
-	List<RsvpTime> findByDateIdAndActive(Long dateId,String active);
+	List<RsvpTime> findByDateAndActive(Long dateId,String active);
 }

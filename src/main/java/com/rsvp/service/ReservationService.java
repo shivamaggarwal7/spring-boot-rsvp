@@ -51,7 +51,7 @@ public class ReservationService {
 			/*
 			 * Check for all times for given date,if all inactive,set date as inactive too
 			 */
-			if (timeService.getTime(dateId).isEmpty()) {
+			if (dateService.getTimeById(dateId).isEmpty()) {
 				RsvpDate date = dateService.getDateById(dateId);
 				date.setActive(INACTIVE);
 				dateService.saveDate(date);
@@ -60,7 +60,7 @@ public class ReservationService {
 			/*
 			 * Check for all times for given date,if all inactive,set date as inactive too
 			 */
-			if (dateService.getDates(cityId).isEmpty()) {
+			if (cityservice.getDatesById(cityId).isEmpty()) {
 				RsvpCity city = cityservice.getCityById(cityId);
 				city.setActive(INACTIVE);
 				cityservice.saveCity(city);

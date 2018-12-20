@@ -10,5 +10,5 @@ import com.rsvp.entity.RsvpDate;
 @Repository
 public interface DateRepository extends JpaRepository<RsvpDate, Long> {
 
-	List<RsvpDate> findByCityIdAndActive(Long cityId,String active);
+	List<RsvpDate> findByCityAndActive(Long cityId,String active);
 }

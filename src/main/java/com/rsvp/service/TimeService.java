@@ -17,7 +17,7 @@ public class TimeService{
 	private static final String ACTIVE = "Y";
 	
 	public List<RsvpTime> getTime(Long dateId) {
-		return timeRepo.findByDateIdAndActive(dateId, ACTIVE);
+		return timeRepo.findByDateAndActive(dateId, ACTIVE);
 	}
 	
 	public RsvpTime getTimeById(Long timeId) {

@@ -54,12 +54,12 @@ public class RsvpController {
 
 	@RequestMapping("/dates")
 	public List<RsvpDate> getDates(@RequestParam Long cityId) {
-		return dateService.getDates(cityId);
+		return cityservice.getDatesById(cityId);
 	}
 
 	@RequestMapping("/time")
 	public List<RsvpTime> getTime(@RequestParam Long dateId) {
-		return timeService.getTime(dateId);
+		return dateService.getTimeById(dateId);
 	}
 
 	@PostMapping("/validateEmail")
