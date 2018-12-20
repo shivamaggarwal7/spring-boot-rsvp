@@ -17,7 +17,7 @@ public class RegistrantService {
 	private static final String ACTIVE = "Y";
 	
 	public List<Registrant> getRegistrantByEmail(String emailId) {
-		return regRepo.findByEmailIdAndActive(emailId, ACTIVE);
+		return regRepo.findByEmailIdIgnoreCaseAndActive(emailId, ACTIVE);
 	}
 	
 	public Registrant getRegistrantById(Long userId) {
