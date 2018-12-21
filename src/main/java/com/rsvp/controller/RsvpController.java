@@ -46,7 +46,7 @@ public class RsvpController {
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public ModelAndView adminScreen(ModelAndView model) {
 		model.setViewName("admin");
-		model.getModelMap().addAttribute("users", regService.getRegistrants());
+		model.getModelMap().addAttribute("users", regService.getRegistrantsByRsvped());
 		return model;
 	}
 

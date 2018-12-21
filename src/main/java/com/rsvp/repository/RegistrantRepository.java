@@ -11,4 +11,6 @@ import com.rsvp.entity.Registrant;
 public interface RegistrantRepository extends JpaRepository<Registrant, Long> {
 	
 	List<Registrant> findByEmailIdIgnoreCaseAndActive(String emailId,String active);
+	
+	List<Registrant> findByRsvpFlag(boolean rsvpd);
 }

@@ -15,13 +15,14 @@ public class RegistrantService {
 	private RegistrantRepository regRepo;
 	
 	private static final String ACTIVE = "Y";
+	private static final boolean RSVPED = true;
 	
 	public List<Registrant> getRegistrantByEmail(String emailId) {
 		return regRepo.findByEmailIdIgnoreCaseAndActive(emailId, ACTIVE);
 	}
 	
-	public List<Registrant> getRegistrants() {
-		return regRepo.findAll();
+	public List<Registrant> getRegistrantsByRsvped() {
+		return regRepo.findByRsvpFlag(RSVPED);
 	}
 	
 	public Registrant getRegistrantById(Long userId) {
