@@ -20,7 +20,6 @@ import com.rsvp.service.CityService;
 import com.rsvp.service.DateService;
 import com.rsvp.service.RegistrantService;
 import com.rsvp.service.ReservationService;
-import com.rsvp.service.TimeService;
 
 @RestController
 public class RsvpController {
@@ -34,9 +33,6 @@ public class RsvpController {
 	private DateService dateService;
 
 	@Autowired
-	private TimeService timeService;
-
-	@Autowired
 	private RegistrantService regService;
 	
 	@Autowired
@@ -45,6 +41,13 @@ public class RsvpController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView homeScreen(ModelMap model) {
 		return new ModelAndView("view");
+	}
+	
+	@RequestMapping(value = "/admin", method = RequestMethod.GET)
+	public ModelAndView adminScreen(ModelAndView model) {
+		model.setViewName("admin");
+		model.getModelMap().addAttribute("users", regService.getRegistrants());
+		return model;
 	}
 
 	@RequestMapping("/cities")

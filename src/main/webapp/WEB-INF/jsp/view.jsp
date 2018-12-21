@@ -2,6 +2,9 @@
 
 <form method="post" action="/validateEmail">
  <label>Enter email id</label><br>
+ <input type="hidden"
+	name="${_csrf.parameterName}"
+	value="${_csrf.token}"/>
  <input type="text" name="email" autocomplete="true"><br>
  <input type="submit">
 </form>

@@ -5,6 +5,7 @@ Ready for rsvp ${user.firstName} ${user.lastName} ${user.dob} ${user.phoneNo} ${
 <br>
 <form method="post" action="/reserveRSVP">
 <input type="hidden" name="userId" value="${user.userId}">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <select name="cityId" onchange="javascript:getDates($(this).val());">
 <option value="">Select</option>
 <c:forEach items="${cities}" var="city">
